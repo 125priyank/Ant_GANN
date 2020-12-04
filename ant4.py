@@ -90,5 +90,5 @@ def main(neuralNetwork):
 # np.random.seed(1999)
 x = np.random.rand(20, 1)
 y = np.random.rand(4, 1)
-bestPop = GA(x, y, n_h=[20, 12], generations=2, popSize=1, eliteSize=0, main=main, mutationRate=0.05)
+bestPop = GA(x, y, n_h=[20, 12], generations=1000, popSize=1, eliteSize=0, main=main, mutationRate=0.05)
 

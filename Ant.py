@@ -20,9 +20,7 @@ moves = {
   'l': (-1, 0),
   'r': (1, 0)
 }
-food_storage = []
-for i in range(100):
-    food_storage.append((random.randrange(0, GRID_WIDTH), random.randrange(0, GRID_HEIGHT)))
+
 class Ant:
     def __init__  (self, x, y):
         self.x = x
@@ -31,10 +29,8 @@ class Ant:
         self.grid = []
         self.num_moves = 0
         self.allowed_moves = 100
-        self.food_storage = copy.deepcopy(food_storage)
-        self.mat = np.zeros((GRID_HEIGHT, GRID_WIDTH))
         self.num_food = 0
-        self.direction = 'u'
+        self.direction = possible_directions[random.randrange(0, 4)]
         self.prev_min = 40
         for i in range(GRID_HEIGHT):
             tmp = []
@@ -124,7 +120,6 @@ class Ant:
         #   print(vision)
         return vision
         
-    
     def draw(self, WIN, ANT_IMAGE):
         ant_image = pygame.Surface((TILE_SIZE, TILE_SIZE))
         ant_image.fill((0, 0, 0))

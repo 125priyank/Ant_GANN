@@ -20,7 +20,10 @@ def GA(X, Y, n_h, main, generations=10, popSize=100, eliteSize=10, mutationRate=
     population=[]
 
     for i in range(popSize):
-        population.append(NeuralNetwork(X, Y, n_h))
+        nn = []
+        for i in range(4):
+            nn.append(NeuralNetwork(X, Y, n_h))
+        population.append(nn)
     return population
 
   def mutation(child, mutationRate):
@@ -29,9 +32,10 @@ def GA(X, Y, n_h, main, generations=10, popSize=100, eliteSize=10, mutationRate=
     lscale = 0.0
     # Add decay in scale
     # scale = scale/pow(10, generationCount//10)
-    for _, params in child.params.items():
-      if random.random() <= mutationRate:
-        params += np.random.normal(loc=lscale, scale=scale, size=params.shape)
+    for subchild in child:
+        for _, params in subchild.params.items():
+          if random.random() <= mutationRate:
+            params += np.random.normal(loc=lscale, scale=scale, size=params.shape)
 
   def rankPopulation():
     global population, popRanked
@@ -82,17 +86,11 @@ def GA(X, Y, n_h, main, generations=10, popSize=100, eliteSize=10, mutationRate=
       if best_fitness < fitness:
         best_fitness = fitness
         best_pop = copy.deepcopy(population[popRanked[0][0]])
+        with open('weights_team.pickle', 'wb') as handle:
+            pickle.dump(best_pop, handle, protocol=pickle.HIGHEST_PROTOCOL)
       print("Generation : {}\t Fitness: {}".format(str(i+1), str(fitness)))
 
       population = next_generation(eliteSize, mutationRate)
-      if (i+1)%1000==0:
-        if not os.path.exists('weights'):
-          os.makedirs('weights')
-        with open('weights/weights0.pickle', 'wb') as handle:
-            pickle.dump(best_pop, handle, protocol=pickle.HIGHEST_PROTOCOL)
-        for i in range(1, 100):
-          with open('weights/weights{}.pickle'.format(i), 'wb') as handle:
-            pickle.dump(population[popRanked[i][0]], handle, protocol=pickle.HIGHEST_PROTOCOL)
           # savetxt('{}.csv'.format(name), , delimiter=',')
         # savetxt('antW2.csv', best_pop.ant.brain.W2, delimiter=',')
         # savetxt('antb1.csv', best_pop.ant.brain.b1, delimiter=',')

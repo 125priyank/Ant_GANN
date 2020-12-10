@@ -88,12 +88,13 @@ def layer_sizes(X, Y):
 
 
 relu = ActivationFunction(lambda X: np.maximum(0, X))
+sigmoid = ActivationFunction(lambda X: 1.0 / (1.0 + np.exp(-X)))
 def softmax(z):
     """Softmax function"""
     return np.exp(z) / np.sum(np.exp(z))
 
-def sigmoid(x):
-    return 1/(1+np.exp(-x))
+# def sigmoid(x):
+#     return 1/(1+np.exp(-x))
 
 def MinMaxScaler(x, min, max):
   return  (x - min) / (max - min)

@@ -1,37 +1,31 @@
 import numpy as np
 import random
 import pygame
-from Ant import *
-from GA import *
+from ant_team import *
+from GA_team import *
 
 
 # !zip -r /content/w.zip /content/weights
 gui = False
 if gui:
-    FPS = 50
+    FPS = 100000000000
     WHITE = (200, 200, 200)
     pygame.display.set_caption("Ant Game")
     clock = pygame.time.Clock()
     ANT_IMAGE = pygame.image.load('car.png')
     ANT_IMAGE = pygame.transform.scale(ANT_IMAGE, (TILE_SIZE+10, TILE_SIZE-5))
     WIN = pygame.display.set_mode((WIN_WIDTH,WIN_HEIGHT))
-GEN_NUM = 0
 def main(neuralNetwork):
     ##########
-    global GEN_NUM, food_storage
-    food_storage = []
-    for i in range(100):
-        food_storage.append((random.randrange(0, GRID_WIDTH), random.randrange(0, GRID_HEIGHT)))
     ants = {}
-    GEN_NUM += 1
     # nets = []
     # ge = []
     ge = {}
-    nets = {}
+    # nets = {}
     ant_id = 0
     for net in neuralNetwork:
-        nets[ant_id] = net
-        ants[ant_id] = Ant(random.randrange(0, GRID_WIDTH), random.randrange(0, GRID_HEIGHT))
+        # nets[ant_id] = net
+        ants[ant_id] = Environment(net)
         ge[ant_id] = 0
         ant_id += 1
     ##########
@@ -41,16 +35,8 @@ def main(neuralNetwork):
             clock.tick(FPS)
         rem_ants = set()
         for ant_id, ant in ants.items():
-            brainInput = ant.createVision()
-            brainInput = brainInput.reshape(brainInput.shape[0], 1)
-            brainOutput = nets[ant_id].forward_propagation(brainInput)
-            performance, isIn = ant.move(brainOutput)
+            isIn = ant.move()
             if isIn ==False:
-                rem_ants.add(ant_id)
-                ge[ant_id] += performance
-            else:
-                ge[ant_id] += performance
-            if ant.num_moves > ant.allowed_moves:
                 rem_ants.add(ant_id)
         if gui:
             for event in pygame.event.get():
@@ -74,6 +60,7 @@ def main(neuralNetwork):
             
         
         for ant_id in rem_ants:
+            ge[ant_id] = ants[ant_id].fitness
             ants.pop(ant_id)
         if len(ants) == 0:
             QUIT = True
@@ -90,10 +77,14 @@ def main(neuralNetwork):
         
 
 # np.random.seed(1999)
-x = np.random.rand(20, 1)
+x = np.random.rand(36, 1)
 y = np.random.rand(4, 1)
-# bestPop = GA(x, y, n_h=[20, 12], generations=100, popSize=1000, eliteSize=10, main=main, mutationRate=0.05)
-# with open('weights/weights0.pickle', 'rb') as f:
+# nn = []
+# for i in range(4):
+#     nn.append(NeuralNetwork(x, y, [20, 12]))
+# print(main([nn]))
+bestPop = GA(x, y, n_h=[20, 12], generations=1000, popSize=100, eliteSize=10, main=main, mutationRate=0.1)
+# with open('weights_team.pickle', 'rb') as f:
 #     x = pickle.load(f)
 #     tmp = []
 #     tmp.append(x)

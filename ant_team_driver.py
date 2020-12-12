@@ -6,9 +6,9 @@ from GA_team import *
 
 
 # !zip -r /content/w.zip /content/weights
-gui = True
+gui = False
 if gui:
-    FPS = 10
+    FPS = 5
     WHITE = (200, 200, 200)
     pygame.display.set_caption("Ant Game")
     clock = pygame.time.Clock()
@@ -77,16 +77,18 @@ def main(neuralNetwork):
         
 
 # np.random.seed(1999)
-x = np.random.rand(30, 1)
-y = np.random.rand(4, 1)
+x = np.random.rand(31, 1)
+y = np.random.rand(5, 1)
 # nn = []
 # for i in range(4):
 #     nn.append(NeuralNetwork(x, y, [20, 12]))
 # print(main([nn]))
-bestPop = GA(x, y, n_h=[20, 12], generations=200, popSize=100, eliteSize=10, main=main, mutationRate=0.5)
+# bestPop = GA(x, y, n_h=[20, 12], generations=200, popSize=100, eliteSize=10, main=main, mutationRate=0.5)
 # with open('weights_team.pickle', 'rb') as f:
 #     x = pickle.load(f)
 #     tmp = []
-#     tmp.append(x)
-#     print(main(tmp))
+#     for i in range(1000):
+#         tmp.append(x)
+#     x = main(tmp)
+#     print(sorted(x.items(), key = operator.itemgetter(1), reverse = True)[:100])
 

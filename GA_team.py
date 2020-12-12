@@ -86,11 +86,15 @@ def GA(X, Y, n_h, main, generations=10, popSize=100, eliteSize=10, mutationRate=
       if best_fitness < fitness:
         best_fitness = fitness
         best_pop = copy.deepcopy(population[popRanked[0][0]])
-        with open('weights_team.pickle', 'wb') as handle:
-            pickle.dump(best_pop, handle, protocol=pickle.HIGHEST_PROTOCOL)
+        # with open('weights_team.pickle', 'wb') as handle:
+        #     pickle.dump(best_pop, handle, protocol=pickle.HIGHEST_PROTOCOL)
       print("Generation : {}\t Fitness: {}".format(str(i+1), str(fitness)))
 
       population = next_generation(eliteSize, mutationRate)
+
+      if (i+1)%100==0:
+        with open('weights_team.pickle', 'wb') as handle:
+            pickle.dump(best_pop, handle, protocol=pickle.HIGHEST_PROTOCOL)
           # savetxt('{}.csv'.format(name), , delimiter=',')
         # savetxt('antW2.csv', best_pop.ant.brain.W2, delimiter=',')
         # savetxt('antb1.csv', best_pop.ant.brain.b1, delimiter=',')

@@ -92,7 +92,7 @@ class AntTeam:
         return x < GRID_WIDTH and x >= 0 and y < GRID_HEIGHT and y >= 0
     
     def createVision(self):
-        vision = np.zeros(shape=(30, 1))
+        vision = np.zeros(shape=(31, 1))
         vision[possible_directions[self.direction]+26, 0] = 1
         # fnd = False
         if self.grid[self.x][self.y].ant[friendList[self.antId]] == True:

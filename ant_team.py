@@ -13,12 +13,13 @@ FOOD_ID = 0
 slopes = [
   (-1, 0),(-1, 1),(0, 1),(1, 1),(1, 0),(1, -1),(0, -1),(-1, -1)
 ]
-possible_directions = {'u': 0, 'd': 1, 'l': 2, 'r': 3, 0: 'u', 1: 'd', 2: 'l', 3: 'r'}
+possible_directions = {'u': 0, 'd': 1, 'l': 2, 'r': 3, 0: 'u', 1: 'd', 2: 'l', 3: 'r', 'n' : 4, 4: 'n'}
 moves = {
   'u': (0, 1),
   'd': (0, -1),
   'l': (-1, 0),
-  'r': (1, 0)
+  'r': (1, 0),
+  'n': (0, 0)
 }
 
 
@@ -76,11 +77,11 @@ class AntTeam:
             tmp = next(iter(self.foods))
             cur_min = self.manhattanDistance(self.x, self.y, tmp.x, tmp.y)
             self.performance += 10*(self.prev_min - cur_min)
-            self.prev_min = cur_min
+            self.prev_min = min(self.prev_min, cur_min)
             if self.canEat(cur_x, cur_y):
-                self.num_food += 1
-                self.allowed_moves += 50
-                self.prev_min = 40
+                # self.num_food += 1
+                # self.allowed_moves += 50
+                # self.prev_min = 40
                 return True, True
         return True, False
         
@@ -91,31 +92,35 @@ class AntTeam:
         return x < GRID_WIDTH and x >= 0 and y < GRID_HEIGHT and y >= 0
     
     def createVision(self):
-        vision = np.zeros(shape=(36, 1))
-        vision[possible_directions[self.direction]+32, 0] = 1
+        vision = np.zeros(shape=(30, 1))
+        vision[possible_directions[self.direction]+26, 0] = 1
         # fnd = False
+        if self.grid[self.x][self.y].ant[friendList[self.antId]] == True:
+            vision[24] = 1.0
+        if self.grid[self.x][self.y].food != None:
+            vision[25] = 1.0
         for indx in range(8):
             x, y = self.x, self.y
             found_food = False
             found_friend = False
-            found_enemy = False
+            # found_enemy = False
             while self.validatePoint(x, y):
                 if found_food == False and self.grid[x][y].food != None:
                     found_food = True
-                    vision[4*indx] = 1.0
+                    vision[3*indx] = 1.0
                 if found_friend == False and self.grid[x][y].ant[friendList[self.antId]] == True:
                     found_friend = True
-                    vision[4*indx+1] = 1.0
-                if found_enemy == False:
-                    for enemy in enemyList[self.antId]:
-                        if self.grid[x][y].ant[enemy] == True:
-                            found_enemy = True
-                            vision[4*indx+2] = 1.0
-                            break
+                    vision[3*indx+1] = 1.0
+                # if found_enemy == False:
+                #     for enemy in enemyList[self.antId]:
+                #         if self.grid[x][y].ant[enemy] == True:
+                #             found_enemy = True
+                #             vision[4*indx+2] = 1.0
+                #             break
             
                 x+=slopes[indx][0]
                 y+=slopes[indx][1]
-            vision[4*indx+3] = 1.0/(self.manhattanDistance(x, y, self.x, self.y)+1)
+            vision[3*indx+2] = 1.0/(self.manhattanDistance(x, y, self.x, self.y)+1)
         # if fnd:
         #   print(vision)
         return vision
@@ -184,54 +189,28 @@ class Environment:
             self.grid.append(tmp)
         self.foods = []
         self.addFood()
-        self.addFood()
         self.fitness = 0
         self.days_alive = 0
         self.ant = {}
         self.ant[0] = AntTeam(x=random.randrange(0, GRID_WIDTH), y=random.randrange(0, GRID_HEIGHT),antId='ant1_1', foods=self.foods, grid=self.grid)
         self.ant[1] = AntTeam(x=random.randrange(0, GRID_WIDTH), y=random.randrange(0, GRID_HEIGHT),antId='ant1_2', foods=self.foods, grid=self.grid)
-        self.ant[2] = AntTeam(x=random.randrange(0, GRID_WIDTH), y=random.randrange(0, GRID_HEIGHT),antId='ant2_1', foods=self.foods, grid=self.grid)
-        self.ant[3] = AntTeam(x=random.randrange(0, GRID_WIDTH), y=random.randrange(0, GRID_HEIGHT),antId='ant2_2', foods=self.foods, grid=self.grid)
 
     def sameLocation(self, antId1, antId2):
         if antId1 not in self.ant or antId2 not in self.ant:
             return False
         return self.ant[antId1].x==self.ant[antId2].x and self.ant[antId1].y==self.ant[antId2].y
 
-    def teamEat(self):
-        # Two ant with same team at same location with a single enemy at the same location
-        # The team ant will eat the enemy ant
-        kill_profit = 1e5
-        if self.sameLocation(0, 1):
-            if self.sameLocation(2, 3)==False and self.sameLocation(0, 2):
-                self.ant[0].performance += kill_profit
-                self.ant[1].performance += kill_profit
-                self.fitness += self.ant[2].performance
-                self.ant.pop(2)
-            elif self.sameLocation(2, 3)==False and self.sameLocation(0, 3):
-                self.ant[0].performance += kill_profit
-                self.ant[1].performance += kill_profit
-                self.fitness += self.ant[3].performance
-                self.ant.pop(3)
-        elif self.sameLocation(2, 3):
-            if self.sameLocation(0, 1)==False and self.sameLocation(2, 0):
-                self.ant[2].performance += kill_profit
-                self.ant[3].performance += kill_profit
-                self.fitness += self.ant[0].performance
-                self.ant.pop(0)
-            elif self.sameLocation(0, 1)==False and self.sameLocation(2, 1):
-                self.ant[2].performance += kill_profit
-                self.ant[3].performance += kill_profit
-                self.fitness += self.ant[1].performance
-                self.ant.pop(1)
+    # def teamEat(self):
+    #     kill_profit = 1e3
+        
 
     def move(self):
         remAnt = set()
         contestForFood = []
         self.days_alive += 1
-        # print(len(self.ant))
-        # if len(self.ant) > 2:
-        self.teamEat()
+        if self.days_alive > 1000:
+            print("Problem here")
+            return False
 
         for antId, ant in self.ant.items():
             isIn, canEat = ant.move(self.neuralNetwork[antId].forward_propagation(ant.createVision().reshape(-1, 1)))
@@ -240,26 +219,25 @@ class Environment:
             elif canEat == True:
                 contestForFood.append(ant)
 
-        for ant in contestForFood:
-            ant.performance += (1000.0)/len(contestForFood)
 
-        if len(contestForFood) > 0:
+        if len(contestForFood) > 1:
+            self.fitness += 1e4
+            for antId, ant in self.ant.items():
+                ant.num_food += 1
+                ant.allowed_moves += 50
+                ant.prev_min = 40
             self.eat()
 
         for antId, ant in self.ant.items():
             if ant.num_moves > ant.allowed_moves:
                 remAnt.add(antId)
 
-        for antId in remAnt:
-            self.fitness += self.ant[antId].performance
-            self.ant.pop(antId)
-
-        
-        if len(self.ant)<3:
+        if len(remAnt) > 0:
             for antId, ant in self.ant.items():
                 self.fitness += ant.performance
             return False
         return True
+
 
     def eat(self):
         self.grid[self.foods[0].x][self.foods[0].y].food = None

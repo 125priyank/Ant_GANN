@@ -1,14 +1,14 @@
+import pygame
 import numpy as np
 import random
-import pygame
 from ant_team import *
 from GA_team import *
 
 
 # !zip -r /content/w.zip /content/weights
-gui = False
+gui = True
 if gui:
-    FPS = 100000000000
+    FPS = 10
     WHITE = (200, 200, 200)
     pygame.display.set_caption("Ant Game")
     clock = pygame.time.Clock()
@@ -77,13 +77,13 @@ def main(neuralNetwork):
         
 
 # np.random.seed(1999)
-x = np.random.rand(36, 1)
+x = np.random.rand(30, 1)
 y = np.random.rand(4, 1)
 # nn = []
 # for i in range(4):
 #     nn.append(NeuralNetwork(x, y, [20, 12]))
 # print(main([nn]))
-bestPop = GA(x, y, n_h=[20, 12], generations=1000, popSize=100, eliteSize=10, main=main, mutationRate=0.1)
+bestPop = GA(x, y, n_h=[20, 12], generations=200, popSize=100, eliteSize=10, main=main, mutationRate=0.5)
 # with open('weights_team.pickle', 'rb') as f:
 #     x = pickle.load(f)
 #     tmp = []

@@ -54,7 +54,7 @@ class Ant:
         
     def addFood(self):
         # tmp = self.food_storage.pop()
-        tmp = (random.randrange(0, GRID_HEIGHT), random.randrange(0, GRID_WIDTH))
+        tmp = (random.randrange(1, GRID_HEIGHT-1), random.randrange(1, GRID_WIDTH-1))
         food = Food(tmp[0], tmp[1])
         self.foods.add(food)
         self.grid[food.x][food.y].food = food
@@ -82,7 +82,6 @@ class Ant:
         if self.isOut(cur_x, cur_y) or self.isBackMove(prev_direction):
             return -500, False
         else:
-            self.mat[self.x, self.y]+=1
             performance = 1
             tmp = next(iter(self.foods))
             cur_min = self.manhattanDistance(self.x, self.y, tmp.x, tmp.y)

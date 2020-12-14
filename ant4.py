@@ -93,9 +93,9 @@ def main(neuralNetwork):
 x = np.random.rand(20, 1)
 y = np.random.rand(4, 1)
 # bestPop = GA(x, y, n_h=[20, 12], generations=100, popSize=1000, eliteSize=10, main=main, mutationRate=0.05)
-# with open('weights/weights0.pickle', 'rb') as f:
-#     x = pickle.load(f)
-#     tmp = []
-#     tmp.append(x)
-#     print(main(tmp))
+with open('weights/weights0.pickle', 'rb') as f:
+    x = pickle.load(f)
+    tmp = []
+    tmp.append(x)
+    print(main(tmp))
 

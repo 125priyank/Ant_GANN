@@ -75,7 +75,15 @@ def main(neuralNetwork):
 
     return ge 
         
-
+def mutation(child, mutationRate):
+    scale = 0.1
+    lscale = 0.0
+    # Add decay in scale
+    # scale = scale/pow(10, generationCount//10)
+    for subchild in child:
+        for _, params in subchild.params.items():
+            if random.random() <= mutationRate:
+                params += np.random.normal(loc=lscale, scale=scale, size=params.shape)
 # np.random.seed(1999)
 x = np.random.rand(31, 1)
 y = np.random.rand(5, 1)
@@ -83,11 +91,19 @@ y = np.random.rand(5, 1)
 # for i in range(4):
 #     nn.append(NeuralNetwork(x, y, [20, 12]))
 # print(main([nn]))
-# bestPop = GA(x, y, n_h=[20, 12], generations=200, popSize=100, eliteSize=10, main=main, mutationRate=0.5)
-# with open('weights_team.pickle', 'rb') as f:
+initPopulation = []
+with open('weights_team_overall (2).pickle', 'rb') as f:
+    singleParent = pickle.load(f)
+initPopulation.append(singleParent)
+for i in range(999):
+    tmpParent = copy.deepcopy(singleParent)
+    mutation(tmpParent, 1.0)
+    initPopulation.append(tmpParent)
+bestPop = GA(x, y, n_h=[20, 12], generations=200, popSize=1000, eliteSize=100, main=main, mutationRate=0.5, initPopulation=initPopulation)
+# with open('weights_team_overall (2).pickle', 'rb') as f:
 #     x = pickle.load(f)
 #     tmp = []
-#     for i in range(1000):
+#     for i in range(100):
 #         tmp.append(x)
 #     x = main(tmp)
 #     print(sorted(x.items(), key = operator.itemgetter(1), reverse = True)[:100])

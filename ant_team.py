@@ -110,7 +110,7 @@ class AntTeam:
                     vision[3*indx] = 1.0
                 if found_friend == False and self.grid[x][y].ant[friendList[self.antId]] == True:
                     found_friend = True
-                    vision[3*indx+1] = 1.0
+                    vision[3*indx+1] = 1.0/(self.manhattanDistance(self.x, self.y, x, y)+1)
                 # if found_enemy == False:
                 #     for enemy in enemyList[self.antId]:
                 #         if self.grid[x][y].ant[enemy] == True:

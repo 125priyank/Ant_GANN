@@ -1,8 +1,10 @@
 import numpy as np
 import random
 import pygame
+import json
 from Ant import *
 from GA import *
+# from save import *
 
 
 # !zip -r /content/w.zip /content/weights
@@ -16,16 +18,19 @@ if gui:
     ANT_IMAGE = pygame.transform.scale(ANT_IMAGE, (TILE_SIZE+10, TILE_SIZE-5))
     WIN = pygame.display.set_mode((WIN_WIDTH,WIN_HEIGHT))
 GEN_NUM = 0
+fp_fitness = open('bestFitness.txt', 'w')
+fp_food = open('bestFood.txt', 'w')
+# save = Save()
 def main(neuralNetwork):
     ##########
-    global GEN_NUM, food_storage
-    food_storage = []
-    for i in range(100):
-        food_storage.append((random.randrange(0, GRID_WIDTH), random.randrange(0, GRID_HEIGHT)))
+    global GEN_NUM, fp_fitness, fp_food
     ants = {}
-    GEN_NUM += 1
+    
     # nets = []
     # ge = []
+    best_fitness = -1e6
+    bestAnt = Ant(0, 0)
+
     ge = {}
     nets = {}
     ant_id = 0
@@ -58,22 +63,11 @@ def main(neuralNetwork):
                     QUIT = True
                     pygame.quit()
                     quit()
-                # elif event.type == pygame.KEYDOWN:
-                #     if event.key == pygame.K_LEFT:
-                #         output[2] = 1
-                #     elif event.key == pygame.K_UP:
-                #         output[3] = 1
-                #     elif event.key == pygame.K_RIGHT:
-                #         output[4] = 1
-                #     elif event.key == pygame.K_DOWN:
-                #         output[0] = 1
-                #     for ant in ants:
-                #         valid = ant.move(output)
-                #         if not valid:
-                #             rem_ants.add(ant)
-            
         
         for ant_id in rem_ants:
+            if best_fitness < ge[ant_id]:
+                best_fitness = ge[ant_id]
+                bestAnt = ants[ant_id]
             ants.pop(ant_id)
         if len(ants) == 0:
             QUIT = True
@@ -85,17 +79,34 @@ def main(neuralNetwork):
                 ant.draw(WIN, ANT_IMAGE)
                 # ant.move(np.random.rand(5))
             pygame.display.update()
-
+    fp_fitness.write('{}\n'.format(best_fitness))
+    fp_food.write('{}\n'.format(bestAnt.num_food))
+    if GEN_NUM%10 == 0:
+        if not os.path.exists('save'):
+          os.makedirs('save')
+        saveDict = {'ant' : bestAnt.ant_locations, 'food' : bestAnt.food_locations}
+        # save.generationBest[GEN_NUM] = saveDict
+        with open('save/save{}.json'.format(GEN_NUM), 'w') as fp:
+            json.dump(saveDict, fp)
+    GEN_NUM += 1
     return ge 
         
 
 # np.random.seed(1999)
 x = np.random.rand(20, 1)
 y = np.random.rand(4, 1)
-# bestPop = GA(x, y, n_h=[20, 12], generations=100, popSize=1000, eliteSize=10, main=main, mutationRate=0.05)
-with open('weights/weights0.pickle', 'rb') as f:
-    x = pickle.load(f)
-    tmp = []
-    tmp.append(x)
-    print(main(tmp))
+bestPop = GA(x, y, n_h=[20, 12], generations=22, popSize=100, eliteSize=10, main=main, mutationRate=0.05)
+# with open('weights/weights0.pickle', 'rb') as f:
+#     x = pickle.load(f)
+#     tmp = []
+#     tmp.append(x)
+#     print(main(tmp))
+# with open('save.json', 'w') as fp:
+#     json.dump(save.generationBest, fp)
+# print(len(save.generationBest))
+
+# Fitness for every generation
+# Every %10 generation - coordinates of ant and food.
+# Number of food eaten per generation.
+
 

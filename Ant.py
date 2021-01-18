@@ -40,6 +40,9 @@ class Ant:
                 
         for i in range(1):
             self.addFood()
+
+        self.ant_locations = [[x, y, self.direction]]
+        self.food_locations = [[next(iter(self.foods)).x, next(iter(self.foods)).y]]
         
     def canEat(self, x,y):
         if self.grid[x][y].food != None:
@@ -79,6 +82,8 @@ class Ant:
         self.y += moves[self.direction][1]
         cur_x = self.x
         cur_y = self.y
+        self.ant_locations.append([cur_x, cur_y, self.direction])
+        self.food_locations.append([next(iter(self.foods)).x, next(iter(self.foods)).y])
         if self.isOut(cur_x, cur_y) or self.isBackMove(prev_direction):
             return -500, False
         else:
@@ -86,7 +91,7 @@ class Ant:
             tmp = next(iter(self.foods))
             cur_min = self.manhattanDistance(self.x, self.y, tmp.x, tmp.y)
             performance += 10*(self.prev_min - cur_min)
-            self.prev_min = cur_min
+            self.prev_min = min(self.prev_min, cur_min)
             if self.canEat(cur_x, cur_y):
                 self.num_food += 1
                 performance += 1000

@@ -8,9 +8,9 @@ from GA import *
 
 
 # !zip -r /content/w.zip /content/weights
-gui = False
+gui = True
 if gui:
-    FPS = 50
+    FPS = 10
     WHITE = (200, 200, 200)
     pygame.display.set_caption("Ant Game")
     clock = pygame.time.Clock()
@@ -18,8 +18,8 @@ if gui:
     ANT_IMAGE = pygame.transform.scale(ANT_IMAGE, (TILE_SIZE+10, TILE_SIZE-5))
     WIN = pygame.display.set_mode((WIN_WIDTH,WIN_HEIGHT))
 GEN_NUM = 0
-fp_fitness = open('bestFitness.txt', 'w')
-fp_food = open('bestFood.txt', 'w')
+# fp_fitness = open('bestFitness.txt', 'w')
+# fp_food = open('bestFood.txt', 'w')
 # save = Save()
 def main(neuralNetwork):
     ##########
@@ -79,23 +79,23 @@ def main(neuralNetwork):
                 ant.draw(WIN, ANT_IMAGE)
                 # ant.move(np.random.rand(5))
             pygame.display.update()
-    fp_fitness.write('{}\n'.format(best_fitness))
-    fp_food.write('{}\n'.format(bestAnt.num_food))
-    if GEN_NUM%10 == 0:
-        if not os.path.exists('save'):
-          os.makedirs('save')
-        saveDict = {'ant' : bestAnt.ant_locations, 'food' : bestAnt.food_locations}
-        # save.generationBest[GEN_NUM] = saveDict
-        with open('save/save{}.json'.format(GEN_NUM), 'w') as fp:
-            json.dump(saveDict, fp)
+    # fp_fitness.write('{}\n'.format(best_fitness))
+    # fp_food.write('{}\n'.format(bestAnt.num_food))
+    # if GEN_NUM%10 == 0:
+    #     if not os.path.exists('save'):
+    #       os.makedirs('save')
+    #     saveDict = {'ant' : bestAnt.ant_locations, 'food' : bestAnt.food_locations}
+    #     # save.generationBest[GEN_NUM] = saveDict
+    #     with open('save/save{}.json'.format(GEN_NUM), 'w') as fp:
+    #         json.dump(saveDict, fp)
     GEN_NUM += 1
     return ge 
         
 
 # np.random.seed(1999)
-x = np.random.rand(20, 1)
-y = np.random.rand(4, 1)
-bestPop = GA(x, y, n_h=[20, 12], generations=22, popSize=100, eliteSize=10, main=main, mutationRate=0.05)
+x = np.random.rand(24, 1)
+y = np.random.rand(8, 1)
+bestPop = GA(x, y, n_h=[20, 12], generations=100, popSize=100, eliteSize=10, main=main, mutationRate=0.5)
 # with open('weights/weights0.pickle', 'rb') as f:
 #     x = pickle.load(f)
 #     tmp = []

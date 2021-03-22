@@ -85,11 +85,11 @@ def GA(X, Y, n_h, main, generations=10, popSize=100, eliteSize=10, mutationRate=
       print("Generation : {}\t Fitness: {}".format(str(i+1), str(fitness)))
 
       population = next_generation(eliteSize, mutationRate)
-      if i%100==0:
-        if not os.path.exists('weights'):
-          os.makedirs('weights')
-        with open('weights/weights{}.pickle'.format(i), 'wb') as handle:
-            pickle.dump(best_pop, handle, protocol=pickle.HIGHEST_PROTOCOL)
+      # if i%100==0:
+      #   if not os.path.exists('weights'):
+      #     os.makedirs('weights')
+      #   with open('weights/weights{}.pickle'.format(i), 'wb') as handle:
+      #       pickle.dump(best_pop, handle, protocol=pickle.HIGHEST_PROTOCOL)
         # for i in range(1, 100):
         #   with open('weights/weights{}.pickle'.format(i), 'wb') as handle:
         #     pickle.dump(population[popRanked[i][0]], handle, protocol=pickle.HIGHEST_PROTOCOL)

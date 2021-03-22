@@ -13,13 +13,18 @@ FOOD_ID = 0
 slopes = [
   (-1, 0),(-1, 1),(0, 1),(1, 1),(1, 0),(1, -1),(0, -1),(-1, -1)
 ]
-possible_directions = {'u': 0, 'd': 1, 'l': 2, 'r': 3, 0: 'u', 1: 'd', 2: 'l', 3: 'r'}
+possible_directions = {'u': 0, 'd': 1, 'l': 2, 'r': 3, 'ur': 4, 'ul': 5, 'dr': 6, 'dl': 7, 0: 'u', 1: 'd', 2: 'l', 3: 'r', 4:'ur', 5: 'ul', 6: 'dr', 7: 'dl'}
 moves = {
   'u': (0, 1),
   'd': (0, -1),
   'l': (-1, 0),
-  'r': (1, 0)
+  'r': (1, 0),
+  'ur': (1, 1),
+  'ul': (-1, 1),
+  'dr': (1, -1),
+  'dl': (-1, -1)
 }
+prevDirectionMap = {'u': 'd', 'd': 'u', 'l': 'r', 'r': 'l', 'ur': 'dl', 'ul': 'dr', 'dl': 'ur', 'dr': 'ul'}
 
 class Ant:
     def __init__  (self, x, y):
@@ -30,7 +35,7 @@ class Ant:
         self.num_moves = 0
         self.allowed_moves = 100
         self.num_food = 0
-        self.direction = possible_directions[random.randrange(0, 4)]
+        self.direction = possible_directions[random.randrange(0, 8)]
         self.prev_min = 40
         for i in range(GRID_HEIGHT):
             tmp = []
@@ -63,14 +68,7 @@ class Ant:
         self.grid[food.x][food.y].food = food
         
     def isBackMove(self, prev_direction):
-        if prev_direction=='u':
-          return self.direction == 'd'
-        elif prev_direction=='d':
-          return self.direction == 'u'
-        elif prev_direction=='l':
-          return self.direction == 'r'
-        elif prev_direction=='r':
-          return self.direction == 'l'
+        return prevDirectionMap[prev_direction] == self.direction
         
     def move(self, output):
         # move - (u - 0)
@@ -106,7 +104,7 @@ class Ant:
         return x < GRID_WIDTH and x >= 0 and y < GRID_HEIGHT and y >= 0
     
     def createVision(self):
-        vision = np.zeros(shape=(20, 1))
+        vision = np.zeros(shape=(24, 1))
         vision[possible_directions[self.direction]+16, 0] = 1
         # fnd = False
         for indx in range(8):

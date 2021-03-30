@@ -73,6 +73,8 @@ class Ant:
     def move(self, output):
         # move - (u - 0)
         self.num_moves += 1
+        if self.num_moves > 1e5:
+            return 0, False
         indx = np.argmax(output)
         prev_direction = self.direction
         self.direction = possible_directions[indx]
@@ -82,7 +84,7 @@ class Ant:
         cur_y = self.y
         self.ant_locations.append([cur_x, cur_y, self.direction])
         self.food_locations.append([next(iter(self.foods)).x, next(iter(self.foods)).y])
-        if self.isOut(cur_x, cur_y) or self.isBackMove(prev_direction):
+        if self.isOut(cur_x, cur_y) :
             return -500, False
         else:
             performance = 1

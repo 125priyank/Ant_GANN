@@ -15,7 +15,7 @@ if gui:
     pygame.display.set_caption("Ant Game")
     clock = pygame.time.Clock()
     ANT_IMAGE = pygame.image.load('car.png')
-    ANT_IMAGE = pygame.transform.scale(ANT_IMAGE, (TILE_SIZE+10, TILE_SIZE-5))
+    # ANT_IMAGE = pygame.transform.scale(ANT_IMAGE, (TILE_SIZE+10, TILE_SIZE-5))
     WIN = pygame.display.set_mode((WIN_WIDTH,WIN_HEIGHT))
 GEN_NUM = 0
 # fp_fitness = open('bestFitness.txt', 'w')

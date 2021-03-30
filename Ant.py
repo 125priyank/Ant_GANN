@@ -121,6 +121,9 @@ class Ant:
         # if fnd:
         #   print(vision)
         return vision
+
+        # function for slope calculation
+        # y2-y1+1 / x2 - x1 + 1
         
     def draw(self, WIN, ANT_IMAGE):
         ant_image = pygame.Surface((TILE_SIZE, TILE_SIZE))
